@@ -118,6 +118,9 @@ describe('/api/youtube', () => {
     // Mock API error - this will cause getLiveChatId to fail and return 404
     mockYoutube.videos.list.mockRejectedValue(new Error('API Error'))
 
+    // Suppress console.error for this test
+    const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {})
+
     const request = {
       url: 'http://localhost:3000/api/youtube',
     } as any
@@ -126,6 +129,9 @@ describe('/api/youtube', () => {
 
     expect(response.status).toBe(404)
     expect(data.error).toBe('No live chat found')
+
+    // Restore console.error
+    consoleSpy.mockRestore()
   })
 
   it('handles pageToken parameter', async () => {
