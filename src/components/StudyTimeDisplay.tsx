@@ -36,7 +36,13 @@ export const StudyTimeDisplay = ({
           const nextPage = (prev + 1) % totalPages;
           if (nextPage === 0) {
             setShowProgressMessage(true);
-            setTimeout(() => setShowProgressMessage(false), 5000);
+            setTimeout(() => {
+              setIsTransitioning(true);
+              setTimeout(() => {
+                setShowProgressMessage(false);
+                setIsTransitioning(false);
+              }, 1000);
+            }, 4000);
           }
           return nextPage;
         });
@@ -59,22 +65,35 @@ export const StudyTimeDisplay = ({
           {showProgressMessage ? (
             <div className={`text-white text-center space-y-4 transition-opacity duration-1000 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}>
               <h2 className="text-4xl font-bold text-white text-center mb-4">Progress on 基本情報技術者試験</h2>
-              <div className="text-xl space-y-3">
-                <div>Update Date: 2025/07/02</div>
-                <div></div>
-                <div>- Total Time: 20 hour 0min</div>
-                <div>- Exam Date: Not scheduled yet</div>
-                <div>- Test Score: 科目A: 62%, 科目B: 95%</div>
+              <div className="mb-4" style={{fontSize: '30px'}}>Update Date: 2025/07/02</div>
+              <div className="max-w-4xl mx-auto">
+                <table className="w-full text-left border-collapse">
+                  <tbody style={{fontSize: '30px'}}>
+                    <tr className="border-b border-gray-600">
+                      <td className="py-2 px-4 font-medium">Total Time:</td>
+                      <td className="py-2 px-4">20 hour 0min</td>
+                    </tr>
+                    <tr className="border-b border-gray-600">
+                      <td className="py-2 px-4 font-medium">Exam Date:</td>
+                      <td className="py-2 px-4">Not scheduled yet</td>
+                    </tr>
+                    <tr>
+                      <td className="py-2 px-4 font-medium">Test Score:</td>
+                      <td className="py-2 px-4">科目A: 62%, 科目B: 95%</td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
             </div>
           ) : (
             <>
-              <h1 className="text-4xl font-bold text-white text-center mb-4">
-                Study Time Tracker
-              </h1>
-              
-              <div className="text-white text-center text-xl mb-4">
-                Updated: {mounted ? formatUpdateTime(lastUpdateTime) : '--:--'}
+              <div className="flex justify-between items-center mb-4">
+                <h1 className="text-4xl font-bold text-white">
+                  Study Time Tracker
+                </h1>
+                <div className="text-white text-2xl">
+                  Updated: {mounted ? formatUpdateTime(lastUpdateTime) : '--:--'}
+                </div>
               </div>
               
               <div className="flex flex-col">
