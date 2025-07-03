@@ -10,6 +10,9 @@ interface StudyTimeDisplayProps {
   formatUpdateTime: (date: Date) => string;
 }
 
+const PAGE_TRANSITION_INTERVAL = 10000;
+const TRANSITION_DURATION = 1000;
+
 
 export const StudyTimeDisplay = ({
   users,
@@ -35,8 +38,8 @@ export const StudyTimeDisplay = ({
       setTimeout(() => {
         setCurrentPage(prev => (prev + 1) % totalPages);
         setIsTransitioning(false);
-      }, 1000);
-    }, 10000);
+      }, TRANSITION_DURATION);
+    }, PAGE_TRANSITION_INTERVAL);
 
     return () => clearInterval(interval);
   }, [totalPages]);
@@ -78,7 +81,7 @@ export const StudyTimeDisplay = ({
                 Waiting for comments...
               </div>
             ) : (
-              <div className={`space-y-3 flex-1 transition-opacity duration-1000 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}>
+              <div className={`space-y-3 flex-1 transition-opacity duration-${TRANSITION_DURATION} ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}>
                 {displayedUsers.map((user) => (
                   <div
                     key={user.name}

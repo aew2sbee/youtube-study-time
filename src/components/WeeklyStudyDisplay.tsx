@@ -12,6 +12,9 @@ interface WeeklyStudyDisplayProps {
   formatUpdateTime: (date: Date) => string;
 }
 
+const PAGE_TRANSITION_INTERVAL = 5 * 1000;
+const TRANSITION_DURATION = 1 * 1000;
+
 export default function WeeklyStudyDisplay({ getWeeklyData, formatTime, lastUpdateTime, formatUpdateTime }: WeeklyStudyDisplayProps) {
   const [weeklyData, setWeeklyData] = useState<WeeklyStudyData>(() => getWeeklyData());
   const [currentPage, setCurrentPage] = useState(0);
@@ -37,8 +40,8 @@ export default function WeeklyStudyDisplay({ getWeeklyData, formatTime, lastUpda
       setTimeout(() => {
         setCurrentPage(prev => (prev + 1) % totalPages);
         setIsTransitioning(false);
-      }, 1000);
-    }, 10000);
+      }, TRANSITION_DURATION);
+    }, PAGE_TRANSITION_INTERVAL);
 
     return () => clearInterval(interval);
   }, [totalPages]);
@@ -75,7 +78,7 @@ export default function WeeklyStudyDisplay({ getWeeklyData, formatTime, lastUpda
                 Waiting for comments...
               </div>
             ) : (
-              <div className={`space-y-2 flex-1 transition-opacity duration-1000 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}>
+              <div className={`space-y-2 flex-1 transition-opacity duration-${TRANSITION_DURATION} ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}>
                 {displayedUsers.map((user) => (
                   <div key={user.name} className="px-3 py-1">
                     <div className="flex items-center justify-between mb-1">
