@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { StudyTimeUser } from '@/types/youtube';
+import { STUDY_PROGRESS } from '@/constants/studyProgress';
 
 interface StudyTimeDisplayProps {
   users: StudyTimeUser[];
@@ -64,22 +65,22 @@ export const StudyTimeDisplay = ({
         <div className="p-4 mb-2 min-h-fit mt-[50vh] transform translate-y-6">
           {showProgressMessage ? (
             <div className={`text-white text-center space-y-4 transition-opacity duration-1000 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}>
-              <h2 className="text-4xl font-bold text-white text-center mb-4">Progress on 基本情報技術者試験</h2>
-              <div className="mb-4" style={{fontSize: '30px'}}>Update Date: 2025/07/02</div>
+              <h2 className="text-4xl font-bold text-white text-center mb-4">{STUDY_PROGRESS.title}</h2>
+              <div className="mb-4" style={{fontSize: '30px'}}>Update Date: {STUDY_PROGRESS.updateDate}</div>
               <div className="max-w-4xl mx-auto">
                 <table className="w-full text-left border-collapse">
                   <tbody style={{fontSize: '30px'}}>
                     <tr className="border-b border-gray-600">
                       <td className="py-2 px-4 font-medium">Total Time:</td>
-                      <td className="py-2 px-4">20 hour 0min</td>
+                      <td className="py-2 px-4">{STUDY_PROGRESS.totalTime}</td>
                     </tr>
                     <tr className="border-b border-gray-600">
                       <td className="py-2 px-4 font-medium">Exam Date:</td>
-                      <td className="py-2 px-4">Not scheduled yet</td>
+                      <td className="py-2 px-4">{STUDY_PROGRESS.examDate}</td>
                     </tr>
                     <tr>
                       <td className="py-2 px-4 font-medium">Test Score:</td>
-                      <td className="py-2 px-4">科目A: 62%, 科目B: 95%</td>
+                      <td className="py-2 px-4">{STUDY_PROGRESS.testScore}</td>
                     </tr>
                   </tbody>
                 </table>
