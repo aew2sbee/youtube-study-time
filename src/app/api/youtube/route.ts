@@ -14,7 +14,7 @@ const getYoutube = async () => {
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const pageToken = searchParams.get('pageToken');
-  
+
   try {
     const youtube = await getYoutube();
     const liveChatId = await getLiveChatId();

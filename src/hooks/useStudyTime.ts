@@ -1,9 +1,18 @@
-import { useState, useEffect, useCallback } from 'react';
-import { StudyTimeUser, YouTubeLiveChatMessage } from '@/types/youtube';
+import { useState } from 'react';
+import { StudyTimeUser, WeeklyStudyData } from '@/types/youtube';
+import { calculateWeeklyStudyData, formatDateString } from '@/utils/weeklyStudyUtils';
 
 // Mock data for testing
 const createMockUsers = (): Map<string, StudyTimeUser> => {
   const mockUsers = new Map<string, StudyTimeUser>();
+  
+  const today = formatDateString(new Date());
+  const yesterday = formatDateString(new Date(Date.now() - 24 * 60 * 60 * 1000));
+  const twoDaysAgo = formatDateString(new Date(Date.now() - 2 * 24 * 60 * 60 * 1000));
+  const threeDaysAgo = formatDateString(new Date(Date.now() - 3 * 24 * 60 * 60 * 1000));
+  const fourDaysAgo = formatDateString(new Date(Date.now() - 4 * 24 * 60 * 60 * 1000));
+  const fiveDaysAgo = formatDateString(new Date(Date.now() - 5 * 24 * 60 * 60 * 1000));
+  const sixDaysAgo = formatDateString(new Date(Date.now() - 6 * 24 * 60 * 60 * 1000));
   
   mockUsers.set('田中太郎', {
     name: '田中太郎',
@@ -11,6 +20,32 @@ const createMockUsers = (): Map<string, StudyTimeUser> => {
     profileImageUrl: 'https://yt3.ggpht.com/ToBVHdJPmTSckqWsesfbs8OxH6kBd-V-81pP8BLysaXnLwVfOjFF9pA05HGdiuTRJjYwuVZ_yA=s88-c-k-c0x00ffffff-no-rj',
     startTime: undefined,
     isStudying: false,
+    hasVisitStamp: true,
+    visitStamps: {
+      [today]: true,
+      [yesterday]: true,
+      [threeDaysAgo]: true,
+    },
+    studySessions: [
+      {
+        date: today,
+        studyTime: 3600,
+        sessions: [{
+          startTime: new Date(Date.now() - 7200000),
+          endTime: new Date(Date.now() - 3600000),
+          duration: 3600
+        }]
+      },
+      {
+        date: yesterday,
+        studyTime: 3600,
+        sessions: [{
+          startTime: new Date(Date.now() - 24 * 60 * 60 * 1000 - 3600000),
+          endTime: new Date(Date.now() - 24 * 60 * 60 * 1000),
+          duration: 3600
+        }]
+      }
+    ]
   });
   
   mockUsers.set('佐藤花子', {
@@ -19,6 +54,31 @@ const createMockUsers = (): Map<string, StudyTimeUser> => {
     profileImageUrl: 'https://yt3.ggpht.com/ToBVHdJPmTSckqWsesfbs8OxH6kBd-V-81pP8BLysaXnLwVfOjFF9pA05HGdiuTRJjYwuVZ_yA=s88-c-k-c0x00ffffff-no-rj',
     startTime: new Date(Date.now() - 1800000), // started 30 minutes ago
     isStudying: true,
+    hasVisitStamp: true,
+    visitStamps: {
+      [today]: true,
+      [fiveDaysAgo]: true,
+    },
+    studySessions: [
+      {
+        date: today,
+        studyTime: 3600,
+        sessions: [{
+          startTime: new Date(Date.now() - 5400000),
+          endTime: new Date(Date.now() - 1800000),
+          duration: 3600
+        }]
+      },
+      {
+        date: yesterday,
+        studyTime: 1800,
+        sessions: [{
+          startTime: new Date(Date.now() - 24 * 60 * 60 * 1000 - 1800000),
+          endTime: new Date(Date.now() - 24 * 60 * 60 * 1000),
+          duration: 1800
+        }]
+      }
+    ]
   });
   
   mockUsers.set('山田次郎', {
@@ -27,6 +87,23 @@ const createMockUsers = (): Map<string, StudyTimeUser> => {
     profileImageUrl: 'https://yt3.ggpht.com/ToBVHdJPmTSckqWsesfbs8OxH6kBd-V-81pP8BLysaXnLwVfOjFF9pA05HGdiuTRJjYwuVZ_yA=s88-c-k-c0x00ffffff-no-rj',
     startTime: undefined,
     isStudying: false,
+    hasVisitStamp: true,
+    visitStamps: {
+      [yesterday]: true,
+      [fourDaysAgo]: true,
+      [sixDaysAgo]: true,
+    },
+    studySessions: [
+      {
+        date: today,
+        studyTime: 3600,
+        sessions: [{
+          startTime: new Date(Date.now() - 3600000),
+          endTime: new Date(Date.now()),
+          duration: 3600
+        }]
+      }
+    ]
   });
   
   mockUsers.set('鈴木一郎', {
@@ -35,6 +112,30 @@ const createMockUsers = (): Map<string, StudyTimeUser> => {
     profileImageUrl: 'https://yt3.ggpht.com/ToBVHdJPmTSckqWsesfbs8OxH6kBd-V-81pP8BLysaXnLwVfOjFF9pA05HGdiuTRJjYwuVZ_yA=s88-c-k-c0x00ffffff-no-rj',
     startTime: new Date(Date.now() - 600000), // started 10 minutes ago
     isStudying: true,
+    hasVisitStamp: true,
+    visitStamps: {
+      [twoDaysAgo]: true,
+    },
+    studySessions: [
+      {
+        date: today,
+        studyTime: 1200,
+        sessions: [{
+          startTime: new Date(Date.now() - 1800000),
+          endTime: new Date(Date.now() - 600000),
+          duration: 1200
+        }]
+      },
+      {
+        date: yesterday,
+        studyTime: 600,
+        sessions: [{
+          startTime: new Date(Date.now() - 24 * 60 * 60 * 1000 - 600000),
+          endTime: new Date(Date.now() - 24 * 60 * 60 * 1000),
+          duration: 600
+        }]
+      }
+    ]
   });
   
   mockUsers.set('高橋美咲', {
@@ -43,6 +144,25 @@ const createMockUsers = (): Map<string, StudyTimeUser> => {
     profileImageUrl: 'https://yt3.ggpht.com/ToBVHdJPmTSckqWsesfbs8OxH6kBd-V-81pP8BLysaXnLwVfOjFF9pA05HGdiuTRJjYwuVZ_yA=s88-c-k-c0x00ffffff-no-rj',
     startTime: undefined,
     isStudying: false,
+    hasVisitStamp: true,
+    visitStamps: {
+      [today]: true,
+      [yesterday]: true,
+      [twoDaysAgo]: true,
+      [threeDaysAgo]: true,
+      [fourDaysAgo]: true,
+    },
+    studySessions: [
+      {
+        date: today,
+        studyTime: 2700,
+        sessions: [{
+          startTime: new Date(Date.now() - 2700000),
+          endTime: new Date(Date.now()),
+          duration: 2700
+        }]
+      }
+    ]
   });
   
   mockUsers.set('伊藤健太', {
@@ -51,6 +171,31 @@ const createMockUsers = (): Map<string, StudyTimeUser> => {
     profileImageUrl: 'https://yt3.ggpht.com/ToBVHdJPmTSckqWsesfbs8OxH6kBd-V-81pP8BLysaXnLwVfOjFF9pA05HGdiuTRJjYwuVZ_yA=s88-c-k-c0x00ffffff-no-rj',
     startTime: new Date(Date.now() - 300000), // started 5 minutes ago
     isStudying: true,
+    hasVisitStamp: true,
+    visitStamps: {
+      [yesterday]: true,
+      [threeDaysAgo]: true,
+    },
+    studySessions: [
+      {
+        date: today,
+        studyTime: 600,
+        sessions: [{
+          startTime: new Date(Date.now() - 900000),
+          endTime: new Date(Date.now() - 300000),
+          duration: 600
+        }]
+      },
+      {
+        date: yesterday,
+        studyTime: 300,
+        sessions: [{
+          startTime: new Date(Date.now() - 24 * 60 * 60 * 1000 - 300000),
+          endTime: new Date(Date.now() - 24 * 60 * 60 * 1000),
+          duration: 300
+        }]
+      }
+    ]
   });
   
   return mockUsers;
@@ -59,104 +204,6 @@ const createMockUsers = (): Map<string, StudyTimeUser> => {
 export const useStudyTime = () => {
   const [users, setUsers] = useState<Map<string, StudyTimeUser>>(createMockUsers());
   const [lastUpdateTime, setLastUpdateTime] = useState<Date>(new Date());
-  const [nextPageToken, setNextPageToken] = useState<string>('');
-
-  const updateStudyTime = useCallback((messages: YouTubeLiveChatMessage[]) => {
-    const now = new Date();
-    
-    setUsers(prevUsers => {
-      const newUsers = new Map(prevUsers);
-      
-      messages.forEach(message => {
-        const existingUser = newUsers.get(message.authorDisplayName);
-        const currentTime = new Date(message.publishedAt);
-        const messageText = message.displayMessage.toLowerCase().trim();
-        
-        if (existingUser) {
-          if (messageText === 'start') {
-            // 勉強開始
-            if (!existingUser.isStudying) {
-              existingUser.startTime = currentTime;
-              existingUser.isStudying = true;
-            }
-          } else if (messageText === 'end') {
-            // 勉強終了
-            if (existingUser.isStudying && existingUser.startTime) {
-              const studyDuration = Math.floor((currentTime.getTime() - existingUser.startTime.getTime()) / 1000);
-              if (studyDuration > 0) {
-                existingUser.studyTime += studyDuration;
-              }
-              existingUser.isStudying = false;
-              existingUser.startTime = undefined;
-            }
-          }
-        } else {
-          // 新規ユーザー
-          const isStarting = messageText === 'start';
-          newUsers.set(message.authorDisplayName, {
-            name: message.authorDisplayName,
-            studyTime: 0,
-            profileImageUrl: message.profileImageUrl,
-            startTime: isStarting ? currentTime : undefined,
-            isStudying: isStarting,
-          });
-        }
-      });
-      
-      return newUsers;
-    });
-    
-    setLastUpdateTime(now);
-  }, []);
-
-  const fetchLiveChatMessages = useCallback(async () => {
-    try {
-      const url = `/api/youtube${nextPageToken ? `?pageToken=${nextPageToken}` : ''}`;
-      const response = await fetch(url);
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      
-      const data = await response.json();
-      
-      if (data.error) {
-        console.error('API error:', data.error);
-        return 10000; // Retry in 10 seconds on API error
-      }
-      
-      if (data.messages && data.messages.length > 0) {
-        updateStudyTime(data.messages);
-      }
-      
-      if (data.nextPageToken) {
-        setNextPageToken(data.nextPageToken);
-      }
-      
-      return data.pollingIntervalMillis || 5000;
-    } catch (error) {
-      console.error('Error fetching live chat messages:', error);
-      return 10000; // Retry in 10 seconds on error
-    }
-  }, [nextPageToken, updateStudyTime]);
-
-  // Temporarily disable API polling to show mock data
-  // useEffect(() => {
-  //   let timeoutId: NodeJS.Timeout;
-    
-  //   const poll = async () => {
-  //     const interval = await fetchLiveChatMessages();
-  //     timeoutId = setTimeout(poll, interval);
-  //   };
-    
-  //   poll();
-    
-  //   return () => {
-  //     if (timeoutId) {
-  //       clearTimeout(timeoutId);
-  //     }
-  //   };
-  // }, [fetchLiveChatMessages]);
 
   const formatTime = (seconds: number): string => {
     const hours = Math.floor(seconds / 3600);
@@ -172,10 +219,15 @@ export const useStudyTime = () => {
     return Array.from(users.values()).sort((a, b) => b.studyTime - a.studyTime);
   };
 
+  const getWeeklyData = (targetDate?: Date): WeeklyStudyData => {
+    return calculateWeeklyStudyData(getSortedUsers(), targetDate);
+  };
+
   return {
     users: getSortedUsers(),
     lastUpdateTime,
     formatTime,
     formatUpdateTime,
+    getWeeklyData,
   };
 };

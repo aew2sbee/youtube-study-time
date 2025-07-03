@@ -1,14 +1,14 @@
 'use client';
 
-import { StudyTimeDisplay } from '@/components/StudyTimeDisplay';
+import WeeklyStudyDisplay from '@/components/WeeklyStudyDisplay';
 import { useStudyTime } from '@/hooks/useStudyTime';
 
 export default function Home() {
-  const { users, lastUpdateTime, formatTime, formatUpdateTime } = useStudyTime();
+  const { getWeeklyData, formatTime, lastUpdateTime, formatUpdateTime } = useStudyTime();
 
   return (
-    <StudyTimeDisplay
-      users={users}
+    <WeeklyStudyDisplay 
+      getWeeklyData={getWeeklyData} 
       formatTime={formatTime}
       lastUpdateTime={lastUpdateTime}
       formatUpdateTime={formatUpdateTime}
