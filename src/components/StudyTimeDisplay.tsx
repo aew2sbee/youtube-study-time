@@ -87,7 +87,7 @@ export const StudyTimeDisplay = ({
                     {displayedUsers.map((user) => (
                       <div
                         key={user.name}
-                        className="flex items-center justify-between p-4"
+                        className="flex items-center justify-between px-3 py-2"
                       >
                         <div className="flex items-center space-x-4">
                           <Image
